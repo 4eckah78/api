@@ -11,14 +11,29 @@ clone:
 pipelines:
   default:
     - step:
+        name: Test
+        script:
+          - cd api
+          - pip install -r requirements.txt
+          - ./manage.py test
+
+    - step:
+        name: Build
+        script:
+          - cd api
+          - git archive --format=tar.gz master -o api.tar.gz
+        artifacts:
+          - api.tar.gz
+
+    - step:
+        name: Deploy to production
+        deployment: production
         caches:
           - pip
-        deployment: production
-        script: # Modify the commands below to build your repository.
-            - pipe: atlassian/heroku-deploy:1.2.1
-              variables:
-                HEROKU_API_KEY: $HEROKU_API_KEY
-                HEROKU_APP_NAME: $HEROKU_API_NAME
-            - pip install -r requirements.txt
-            - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD
+        script:
+          - pipe: atlassian/heroku-deploy:0.1.1
+            variables:
+              HEROKU_API_KEY: $HEROKU_API_KEY
+              HEROKU_APP_NAME: $HEROKU_APP_NAME
+              ZIP_FILE: api.tar.gz
            

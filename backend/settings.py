@@ -102,33 +102,33 @@ AUTH_USER_MODEL = 'main.User'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-# DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_URL = os.environ['DATABASE_URL']
 
-# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2', 
-#         'NAME': 'de7332mb1osar1',
-#         'USER': 'qugwibsqubgwlj',
-#         'PASSWORD': 'efb3149abef5236cea18f02624869efb1475431e3ed4a855979fda7f6c6cbf53',
-#         'HOST': 'ec2-54-75-199-252.eu-west-1.compute.amazonaws.com',
-#         'PORT': '5432',
-#     }
-# }
-
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': config('NAME'),
-        'USER': config('USER'),
-        'PASSWORD': config('PASSWORD'),
-        'HOST': config('HOST'),
-        'PORT': '3306',
-
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', 
+        'NAME': 'de7332mb1osar1',
+        'USER': 'qugwibsqubgwlj',
+        'PASSWORD': 'efb3149abef5236cea18f02624869efb1475431e3ed4a855979fda7f6c6cbf53',
+        'HOST': 'ec2-54-75-199-252.eu-west-1.compute.amazonaws.com',
+        'PORT': '5432',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql', 
+#         'NAME': config('NAME'),
+#         'USER': config('USER'),
+#         'PASSWORD': config('PASSWORD'),
+#         'HOST': config('HOST'),
+#         'PORT': '3306',
+
+#     }
+# }
 
 
 
@@ -205,5 +205,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Activate Django-Heroku.
 django_heroku.settings(locals())
 
-# import dj_database_url
-# DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+import dj_database_url
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)

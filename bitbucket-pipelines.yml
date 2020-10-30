@@ -11,16 +11,10 @@ clone:
 pipelines:
   default:
     - step:
-        name: Test
-        script:
-          - cd api
-          - pip install -r requirements.txt
-          - ./manage.py test
-
-    - step:
         name: Build
         script:
           - cd api
+          - print("Hey")
           - git archive --format=tar.gz master -o api.tar.gz
         artifacts:
           - api.tar.gz

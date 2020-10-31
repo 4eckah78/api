@@ -5,6 +5,7 @@ from main.views import *
 
 
 urlpatterns = [
+    path('registration/', registration),
     path('users/all/', GetAllUsers.as_view()),
     path('users/<int:pk>/', PutGetDeleteOneUser.as_view()),
 ]

@@ -44,5 +44,5 @@ def registration(request):
         except IntegrityError as e:
             if "1062" in str(e):
                 return Response({"error": "Такой email уже существует"})
-            returnResponse({"error": "Что-то пошло не так. Возможно введенный email уже существует"})
+            return Response({"error": "Что-то пошло не так. Возможно введенный email уже существует"})
         return Response({"id": userid, "token": Token.objects.get(user=userid).key})

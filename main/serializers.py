@@ -13,7 +13,6 @@ class UserListSerializer(serializers.ModelSerializer):
 
 
 class MyUserSerializer(serializers.ModelSerializer):
-    # token = serializers.CharField(source=Token.key)
     class Meta:
         model = User
         fields = "__all__"

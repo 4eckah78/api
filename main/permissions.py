@@ -7,12 +7,14 @@ class IsOwnerOrReadOnlyOrIsAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS or request.user.is_superuser:
             return True
-        obj_token = Token.objects.filter(user=obj.id)
+        if len(Token.objects.filter(user=obj.id)) == 0:
+            return false 
+        obj_token = Token.objects.get(user=obj.id).key
         request_token = request.headers['Authorization'][6:]
         return obj_token == request_token
 
 
-class IsSuperuser(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+class IsAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
         return request.user.is_superuser
      

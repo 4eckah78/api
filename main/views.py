@@ -10,19 +10,19 @@ from  django.contrib.auth.password_validation import validate_password
 from django.http import JsonResponse, HttpResponse
 from .models import User
 from .serializers import *
-from .permissions import IsOwnerOrReadOnlyOrIsAdmin, IsSuperuser
+from .permissions import IsOwnerOrReadOnlyOrIsAdmin, IsAdmin
 
 
 class GetAllUsers(generics.ListAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
-    permission_classes = [IsSuperuser, ]
+    permission_classes = (IsAdmin, )
 
 
 class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyOrIsAdmin, ]
+    permission_classes = (IsOwnerOrReadOnlyOrIsAdmin, )
 
 
 @api_view(['POST'])

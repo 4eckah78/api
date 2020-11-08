@@ -1,16 +1,19 @@
 from rest_framework import generics
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
+from rest_framework import viewsets
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.shortcuts import get_object_or_404
 from django.db import IntegrityError 
 from  django.contrib.auth.password_validation import validate_password
 from django.http import JsonResponse, HttpResponse
 from .models import User
 from .serializers import *
-from .permissions import IsOwnerOrReadOnlyOrIsAdmin, IsAdmin
+from .permissions import IsOwnerOrReadOnly, IsAdmin
 
 
 class GetAllUsers(generics.ListAPIView):
@@ -22,27 +25,69 @@ class GetAllUsers(generics.ListAPIView):
 class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
-    permission_classes = (IsOwnerOrReadOnlyOrIsAdmin, )
+    permission_classes = (IsAdmin, )
+
+
+class WorkerViewSet(viewsets.ModelViewSet):
+    serializer_class = WorkerSerializer
+    queryset = Worker.objects.all()
+
+
+class VacationViewSet(viewsets.ModelViewSet):
+    serializer_class = VacationSerializer
+    queryset = Vacation.objects.all()
+
+
+class GapViewSet(viewsets.ModelViewSet):
+    serializer_class = GapSerializer
+    queryset = Gap.objects.all()
+
+
+class LatenessViewSet(viewsets.ModelViewSet):
+    serializer_class = LatenessSerializer
+    queryset = Lateness.objects.all()
+
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    queryset = Notification.objects.all()
+
+
+class ExitViewSet(viewsets.ModelViewSet):
+    serializer_class = ExitSerializer
+    queryset = Exit.objects.all()
+
+
+class EnterViewSet(viewsets.ModelViewSet):
+    serializer_class = EnterSerializer
+    queryset = Enter.objects.all()
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def registration(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        try:
-            validate_email(email)
-        except ValidationError as e:
-            return Response({"error" : e.message})
-        password = request.POST['password']
-        try: 
-            validate_password(password)
-        except ValidationError as e:
-            return Response({"error" : e.messages}) 
-        try: 
-            userid = User.objects.create_user(email=email, password=password).id
-        except IntegrityError as e:
-            if "1062" in str(e):
-                return Response({"error": "Такой email уже существует"})
-            return Response({"error": "Что-то пошло не так. Возможно введенный email уже существует"})
-        return Response({"id": userid, "token": Token.objects.get(user=userid).key})
+    serializer = RegistrationSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors)
+    # email = request.POST['email']
+    # password = request.POST['password']
+    # try: 
+    #     validate_password(password)
+    # except ValidationError as e:
+    #     return Response({"error" : e.messages}) 
+    # serializer.validated_data["password"] = password
+    serializer.save()
+    user = User.objects.get(email=serializer.data["email"])
+    token = Token.objects.get(user=user).key
+    return Response(data={"id":user.id, "token":token}, status=status.HTTP_201_CREATED)
+
+
+# @api_view(['GET'])
+# @permission_classes([AllowAny])
+# def is_auth(request, pk):
+#     return Response({"isAuthenticated": len(Token.objects.filter(user=pk))})
+
+# @api_view(['GET'])
+# @permission_classes([AllowAny])
+# def check(request):
+#     return Response({"isAuthenticated": request.user.is_authenticated})

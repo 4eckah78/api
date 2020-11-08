@@ -53,12 +53,12 @@ class Worker(models.Model):
 
 
 class Lateness(models.Model):
-    worker = models.ForeignKey(Worker, on_delete = models.CASCADE)
+    worker = models.ForeignKey(Worker, related_name="latenesses", on_delete = models.CASCADE)
     time_of_lateness = models.DateTimeField(auto_now_add=True)
    
 
 class Gap(models.Model):
-    worker = models.ForeignKey(Worker, on_delete = models.CASCADE)
+    worker = models.ForeignKey(Worker, related_name="gaps", on_delete = models.CASCADE)
     date = models.DateField(auto_now_add=True)
     REASONS = (
         (1, "Выходной"),
@@ -67,27 +67,27 @@ class Gap(models.Model):
         (4, "Командировка"),
     )
     reason = models.IntegerField(choices=REASONS) 
-    document = models.ImageField(upload_to='media/documents/')
+    document = models.ImageField(upload_to='media/documents/', null=True, blank=True)
 
 
 class Notification(models.Model):
     is_gap = models.BooleanField()
     lateness = models.OneToOneField(Lateness, on_delete=models.CASCADE)
     gap = models.OneToOneField(Gap, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notifications", on_delete = models.CASCADE)
 
 
 class Vacation(models.Model):
-    worker = models.ForeignKey(Worker, on_delete = models.CASCADE)
+    worker = models.ForeignKey(Worker, related_name="vacations", on_delete = models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
 
 
 class Exit(models.Model):
-    worker = models.ForeignKey(Worker, on_delete = models.CASCADE)
+    worker = models.ForeignKey(Worker, related_name="exits", on_delete = models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
 
 
 class Enter(models.Model):
-    worker = models.ForeignKey(Worker, on_delete = models.CASCADE)
+    worker = models.ForeignKey(Worker, related_name="enters", on_delete = models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)

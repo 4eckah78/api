@@ -20,7 +20,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
-    table_name = models.CharField(max_length=30)
+    table_name = models.CharField(max_length=60, unique=True)
     
     objects = UserManager()
 
@@ -43,7 +43,7 @@ class Worker(models.Model):
     first_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
     patronymic = models.CharField(max_length=30)
-    avatar_path = models.ImageField(upload_to='media/avatars/', null=True, blank=True)
+    avatar = models.ImageField(upload_to='media/avatars/', null=True, blank=True)
     HOUR_NORM = (
         (1, 36),
         (2, 40),

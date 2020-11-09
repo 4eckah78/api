@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework import viewsets
+from django.http import QueryDict
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.shortcuts import get_object_or_404
@@ -14,6 +15,7 @@ from django.http import JsonResponse, HttpResponse
 from .models import User
 from .serializers import *
 from .permissions import IsOwnerOrReadOnly, IsAdmin
+from .common import get_all_worker_data
 
 
 class GetAllUsers(generics.ListAPIView):
@@ -30,12 +32,33 @@ class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
 
 class WorkerViewSet(viewsets.ModelViewSet):
     serializer_class = WorkerSerializer
-    queryset = Worker.objects.all()
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return self.request.user.worker_set.all()
+        return Worker.objects.all()
+    def create(self, request):
+        data = QueryDict('', mutable=True)
+        data.update({"user": request.user.id})
+        data.update(request.data)
+        serializer = WorkerSerializer(data=data, many=False)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class VacationViewSet(viewsets.ModelViewSet):
     serializer_class = VacationSerializer
     queryset = Vacation.objects.all()
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Vacation.objects.filter(worker__user=self.request.user)
+        return Vacation.objects.all()
+
+
+@api_view(('GET',))
+def get_all_vacations(request, pk):
+    return get_all_worker_data(request, pk, Vacation, VacationSerializer)
 
 
 class GapViewSet(viewsets.ModelViewSet):
@@ -43,14 +66,27 @@ class GapViewSet(viewsets.ModelViewSet):
     queryset = Gap.objects.all()
 
 
+@api_view(('GET',))
+def get_all_gaps(request, pk):
+    return get_all_worker_data(request, pk, Gap, GapSerializer)
+
+
 class LatenessViewSet(viewsets.ModelViewSet):
     serializer_class = LatenessSerializer
     queryset = Lateness.objects.all()
 
 
+@api_view(('GET',))
+def get_all_latenesses(request, pk):
+    return get_all_worker_data(request, pk, Lateness, LatenessSerializer)
+
+
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
-    queryset = Notification.objects.all()
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return self.request.user.notifications.all()
+        return Notification.objects.all()
 
 
 class ExitViewSet(viewsets.ModelViewSet):
@@ -58,9 +94,20 @@ class ExitViewSet(viewsets.ModelViewSet):
     queryset = Exit.objects.all()
 
 
+@api_view(('GET',))
+def get_all_exits(request, pk):
+    return get_all_worker_data(request, pk, Exit, ExitSerializer)
+
+
+
 class EnterViewSet(viewsets.ModelViewSet):
     serializer_class = EnterSerializer
     queryset = Enter.objects.all()
+
+
+@api_view(('GET',))
+def get_all_enters(request, pk):
+    return get_all_worker_data(request, pk, Enter, EnterSerializer)
 
 
 @api_view(['POST'])
@@ -69,17 +116,20 @@ def registration(request):
     serializer = RegistrationSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors)
-    # email = request.POST['email']
-    # password = request.POST['password']
-    # try: 
-    #     validate_password(password)
-    # except ValidationError as e:
-    #     return Response({"error" : e.messages}) 
-    # serializer.validated_data["password"] = password
     serializer.save()
     user = User.objects.get(email=serializer.data["email"])
     token = Token.objects.get(user=user).key
     return Response(data={"id":user.id, "token":token}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+@permission_classes([IsAdmin])
+def get_all_tables(request):
+    users = User.objects.all()
+    serializer = TablesSerializer(users, many=True)
+    print(serializer)
+    tables = [user["table_name"] for user in serializer.data]
+    return Response(data=tables, status=status.HTTP_200_OK)
 
 
 # @api_view(['GET'])

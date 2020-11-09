@@ -29,8 +29,18 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["email", "password", "first_name", "last_name", "table_name"]
-        extra_kwargs = {'first_name':{"required": True}, 'last_name':{"required": True} }
+        extra_kwargs = {'first_name':{"required": True}, 'last_name':{"required": True}, 'password': {'write_only': True}}
 
+    def create(self, validated_data):
+        user = User(
+            email=validated_data['email'],
+            first_name=validated_data['first_name'],
+            last_name = validated_data["last_name"],
+            table_name = validated_data["table_name"],
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 class VacationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,8 +51,10 @@ class VacationSerializer(serializers.ModelSerializer):
 class WorkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Worker
-        fields = ["id", "first_name", "second_name", "patronymic", "avatar_path", 
+        fields = ["id", "first_name", "second_name", "patronymic", "avatar", 
         "hour_norm", "vacation_days", "user", "vacations", "gaps", "latenesses", "exits", "enters"]
+        extra_kwargs = {'vacations':{"required": False}, 'gaps':{"required": False}, 'latenesses':{"required": False}, 
+        'exits':{"required": False}, 'user':{"required": False}, 'enters':{"required": False} }
 
 
 class GapSerializer(serializers.ModelSerializer):
@@ -73,3 +85,9 @@ class EnterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enter
         fields = "__all__"
+
+
+class TablesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["table_name"]

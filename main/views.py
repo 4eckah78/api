@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError 
-from  django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.password_validation import validate_password
 from django.http import JsonResponse, HttpResponse
 from .models import User
 from .serializers import *
@@ -21,13 +21,13 @@ from .common import get_all_worker_data
 class GetAllUsers(generics.ListAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
-    permission_classes = (IsAdmin, )
+    # permission_classes = (IsAdmin, )
 
 
 class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
-    permission_classes = (IsAdmin, )
+    # permission_classes = (IsAdmin, ) 
 
 
 class WorkerViewSet(viewsets.ModelViewSet):
@@ -120,6 +120,15 @@ def registration(request):
     user = User.objects.get(email=serializer.data["email"])
     token = Token.objects.get(user=user).key
     return Response(data={"id":user.id, "token":token}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PUT'])
+def reset_password(request):
+    password = request.data["password"]
+    user = request.user
+    user.set_password(password)
+    user.save()
+    return Response("Good", status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

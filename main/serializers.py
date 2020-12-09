@@ -6,12 +6,6 @@ from .models import *
 User = get_user_model()
 
 
-class UserListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["id", "email", "first_name", "last_name", "is_superuser", "table_name", "notifications"]
-        extra_kwargs = {'email':{"required": False}, 'table_name':{"required": False} }
-
 
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,15 +42,6 @@ class VacationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class WorkerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Worker
-        fields = ["id", "first_name", "second_name", "patronymic", "avatar", 
-        "hour_norm", "vacation_days", "user", "vacations", "gaps", "latenesses", "exits", "enters"]
-        extra_kwargs = {'vacations':{"required": False}, 'gaps':{"required": False}, 'latenesses':{"required": False}, 
-        'exits':{"required": False}, 'user':{"required": False}, 'enters':{"required": False} }
-
-
 class GapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gap
@@ -85,6 +70,28 @@ class EnterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enter
         fields = "__all__"
+
+
+class WorkerSerializer(serializers.ModelSerializer):
+    vacations = VacationSerializer(many=True)
+    gaps = GapSerializer(many=True)
+    latenesses = LatenessSerializer(many=True)
+    exits = ExitSerializer(many=True)
+    enters = EnterSerializer(many=True)
+    class Meta:
+        model = Worker
+        fields = ["id", "first_name", "second_name", "patronymic", "avatar", 
+        "hour_norm", "vacation_days", "user", "vacations", "gaps", "latenesses", "exits", "enters"]
+        extra_kwargs = {'vacations':{"required": False}, 'gaps':{"required": False}, 'latenesses':{"required": False},
+        'exits':{"required": False}, 'user':{"required": False}, 'enters':{"required": False} }
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    workers = WorkerSerializer(many=True)
+    class Meta:
+        model = User
+        fields = ["id", "email", "first_name", "last_name", "is_superuser", "table_name", "notifications", "workers"]
+        extra_kwargs = {'email':{"required": False}, 'table_name':{"required": False} }
 
 
 class TablesSerializer(serializers.ModelSerializer):

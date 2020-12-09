@@ -115,7 +115,7 @@ def get_all_enters(request, pk):
 def registration(request):
     serializer = RegistrationSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     serializer.save()
     user = User.objects.get(email=serializer.data["email"])
     token = Token.objects.get(user=user).key

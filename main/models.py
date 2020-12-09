@@ -39,7 +39,7 @@ class User(AbstractUser):
 
 
 class Worker(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE) 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name="workers") 
     first_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
     patronymic = models.CharField(max_length=30)
@@ -50,6 +50,8 @@ class Worker(models.Model):
     )
     hour_norm = models.IntegerField(choices=HOUR_NORM)
     vacation_days = models.PositiveSmallIntegerField()
+    start_day = models.TimeField()
+    end_day = models.TimeField()
 
 
 class Lateness(models.Model):

@@ -73,17 +73,17 @@ class EnterSerializer(serializers.ModelSerializer):
 
 
 class WorkerSerializer(serializers.ModelSerializer):
-    vacations = VacationSerializer(many=True)
-    gaps = GapSerializer(many=True)
-    latenesses = LatenessSerializer(many=True)
-    exits = ExitSerializer(many=True)
-    enters = EnterSerializer(many=True)
+    vacations = VacationSerializer(many=True, read_only=True)
+    gaps = GapSerializer(many=True, read_only=True)
+    latenesses = LatenessSerializer(many=True, read_only=True)
+    exits = ExitSerializer(many=True, read_only=True)
+    enters = EnterSerializer(many=True, read_only=True)
     class Meta:
         model = Worker
         fields = ["id", "first_name", "second_name", "patronymic", "avatar", 
-        "hour_norm", "vacation_days", "user", "vacations", "gaps", "latenesses", "exits", "enters"]
+        "hour_norm", "vacation_days", "start_day", "end_day", "vacations", "gaps", "latenesses", "exits", "enters"]
         extra_kwargs = {'vacations':{"required": False}, 'gaps':{"required": False}, 'latenesses':{"required": False},
-        'exits':{"required": False}, 'user':{"required": False}, 'enters':{"required": False} }
+        'exits':{"required": False}, 'enters':{"required": False} }
 
 
 class UserListSerializer(serializers.ModelSerializer):

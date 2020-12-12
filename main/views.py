@@ -125,6 +125,7 @@ def registration(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def send_code(request):
     email = request.data["email"]
     user = get_object_or_404(User, email=email)
@@ -140,6 +141,7 @@ def send_code(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def check_reset_code(request):
     code = request.data["code"]
     user = get_object_or_404(User, password=code)

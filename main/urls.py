@@ -26,7 +26,7 @@ urlpatterns = [
     path('worker/<int:pk>/enters/', get_all_enters),
     path('tables/', get_all_tables),
     path('send_code/', send_code),
-    path('check_code/', check_reset_code),
+    path('check_code', check_reset_code),
     path('reset_password/', reset_password),
 ]
 

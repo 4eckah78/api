@@ -79,6 +79,12 @@ class EnterSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class WorkerCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Worker
+        fields = "__all__"
+
+
 class WorkerSerializer(serializers.ModelSerializer):
     vacations = VacationSerializer(many=True, read_only=True)
     gaps = GapSerializer(many=True, read_only=True)

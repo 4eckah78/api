@@ -39,10 +39,12 @@ class WorkerViewSet(viewsets.ModelViewSet):
             return self.request.user.worker_set.all()
         return Worker.objects.all()
     def create(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         data = QueryDict('', mutable=True)
         data.update({"user": request.user.id})
         data.update(request.data)
-        serializer = WorkerSerializer(data=data, many=False)
+        serializer = WorkerCreateSerializer(data=data, many=False)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
@@ -163,7 +165,6 @@ def reset_password(request):
 def get_all_tables(request):
     users = User.objects.all()
     serializer = TablesSerializer(users, many=True)
-    print(serializer)
     tables = [user["table_name"] for user in serializer.data]
     return Response(data=tables, status=status.HTTP_200_OK)
 

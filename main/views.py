@@ -1,3 +1,4 @@
+import random
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
@@ -7,6 +8,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import viewsets
 from django.http import QueryDict
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError 
@@ -119,7 +121,30 @@ def registration(request):
     serializer.save()
     user = User.objects.get(email=serializer.data["email"])
     token = Token.objects.get(user=user).key
-    return Response(data={"id":user.id, "token":token}, status=status.HTTP_201_CREATED)
+    return Response(data={"id":user.id, "is_superuser":user.is_superuser, "token":token}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def send_code(request):
+    email = request.data["email"]
+    user = get_object_or_404(User, email=email)
+    code = random.randint(10000,100000)
+    user.password = code
+    user.save()
+    send_mail("Attendance Control, восстановление пароля",
+              "Код подтверждения: " + str(code),
+              "Attendance Control <noreply@attendancecontrol.com>",
+              [email],
+              fail_silently=False)
+    return Response(data={"message":"email is successfully sent"}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def check_reset_code(request):
+    code = request.data["code"]
+    user = get_object_or_404(User, password=code)
+    token = Token.objects.create(user=user).key
+    return Response(data={"token":token}, status=status.HTTP_200_OK)
 
 
 @api_view(['PUT'])
@@ -128,7 +153,7 @@ def reset_password(request):
     user = request.user
     user.set_password(password)
     user.save()
-    return Response("Good", status=status.HTTP_200_OK)
+    return Response(data={"message":"password is successfully changed"}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

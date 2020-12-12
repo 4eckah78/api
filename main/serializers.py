@@ -13,10 +13,17 @@ class MyUserSerializer(serializers.ModelSerializer):
         fields = "__all__"
  
 
+class SpecialUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "is_superuser"]
+ 
+
 class MyTokenSerializer(serializers.ModelSerializer):
+    user = SpecialUserSerializer(many=False, read_only=True)
     class Meta:
         model = Token
-        fields = ["user", "key"]
+        fields = ["key", "user"]
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

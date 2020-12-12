@@ -108,11 +108,11 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', 
-        'NAME': 'de97rp8n86i261',
-        'USER': 'mtsqvhqxicqyzj',
-        'PASSWORD': 'c5d6ef08c2b0095a407fa3abe3e1273e6597216b64e804058aa07d7be5d92418',
-        'HOST': 'ec2-54-75-244-161.eu-west-1.compute.amazonaws.com',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('NAME'),
+        'USER': config('USER'),
+        'PASSWORD':config('PASSWORD'),
+        'HOST': config('HOST'),
         'PORT': '5432',
     }
 }
@@ -200,6 +200,25 @@ MEDIA_URL = 'Main/'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+
+#S3 BUCKETS CONFIG
+
+
+# AWS_STORAGE_BUCKET_NAME = 'gosha'
+# AWS_S3_FILE_OVERWRITE = False
+# AWS_DEFAULT_ACL = None
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+#SMTP Configuration
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '587'
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())

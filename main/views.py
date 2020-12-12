@@ -145,8 +145,8 @@ def send_code(request):
 def check_reset_code(request):
     code = request.data["code"]
     user = get_object_or_404(User, password=code)
-    token = Token.objects.create(user=user).key
-    return Response(data={"token":token}, status=status.HTTP_200_OK)
+    token, created = Token.objects.get_or_create(user=user)
+    return Response(data={"token":token.key}, status=status.HTTP_200_OK)
 
 
 @api_view(['PUT'])

@@ -16,7 +16,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.http import JsonResponse, HttpResponse
 from .models import User
 from .serializers import *
-from .permissions import IsOwnerOrReadOnly, IsAdmin
+from .permissions import IsOwnerOrReadOnly, IsAdmin, IsOwnerOrReadOnlyAndNoUserField
 from .common import get_all_worker_data
 
 
@@ -54,6 +54,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
 class VacationViewSet(viewsets.ModelViewSet):
     serializer_class = VacationSerializer
     queryset = Vacation.objects.all()
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return Vacation.objects.filter(worker__user=self.request.user)
@@ -68,6 +69,7 @@ def get_all_vacations(request, pk):
 class GapViewSet(viewsets.ModelViewSet):
     serializer_class = GapSerializer
     queryset = Gap.objects.all()
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
 
 
 @api_view(('GET',))
@@ -78,6 +80,7 @@ def get_all_gaps(request, pk):
 class LatenessViewSet(viewsets.ModelViewSet):
     serializer_class = LatenessSerializer
     queryset = Lateness.objects.all()
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
 
 
 @api_view(('GET',))
@@ -96,6 +99,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 class ExitViewSet(viewsets.ModelViewSet):
     serializer_class = ExitSerializer
     queryset = Exit.objects.all()
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
 
 
 @api_view(('GET',))
@@ -107,6 +111,7 @@ def get_all_exits(request, pk):
 class EnterViewSet(viewsets.ModelViewSet):
     serializer_class = EnterSerializer
     queryset = Enter.objects.all()
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
 
 
 @api_view(('GET',))

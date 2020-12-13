@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework import viewsets
 from django.http import QueryDict
 from django.core.exceptions import ValidationError
@@ -54,7 +54,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
 class VacationViewSet(viewsets.ModelViewSet):
     serializer_class = VacationSerializer
     queryset = Vacation.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return Vacation.objects.filter(worker__user=self.request.user)
@@ -69,7 +69,7 @@ def get_all_vacations(request, pk):
 class GapViewSet(viewsets.ModelViewSet):
     serializer_class = GapSerializer
     queryset = Gap.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
 
 
 @api_view(('GET',))
@@ -80,7 +80,7 @@ def get_all_gaps(request, pk):
 class LatenessViewSet(viewsets.ModelViewSet):
     serializer_class = LatenessSerializer
     queryset = Lateness.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
 
 
 @api_view(('GET',))
@@ -99,7 +99,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 class ExitViewSet(viewsets.ModelViewSet):
     serializer_class = ExitSerializer
     queryset = Exit.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
 
 
 @api_view(('GET',))
@@ -111,7 +111,7 @@ def get_all_exits(request, pk):
 class EnterViewSet(viewsets.ModelViewSet):
     serializer_class = EnterSerializer
     queryset = Enter.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField]
+    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
 
 
 @api_view(('GET',))

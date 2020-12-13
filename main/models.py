@@ -87,9 +87,9 @@ class Vacation(models.Model):
 
 class Exit(models.Model):
     worker = models.ForeignKey(Worker, related_name="exits", on_delete = models.CASCADE)
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(default=timezone.now)
 
 
 class Enter(models.Model):
     worker = models.ForeignKey(Worker, related_name="enters", on_delete = models.CASCADE)
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(default=timezone.now)

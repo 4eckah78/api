@@ -56,12 +56,12 @@ class Worker(models.Model):
 
 class Lateness(models.Model):
     worker = models.ForeignKey(Worker, related_name="latenesses", on_delete = models.CASCADE)
-    time_of_lateness = models.DateTimeField(auto_now_add=True)
+    time_of_lateness = models.DateTimeField(default=timezone.now)
    
 
 class Gap(models.Model):
     worker = models.ForeignKey(Worker, related_name="gaps", on_delete = models.CASCADE)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=timezone.now)
     REASONS = (
         (1, "Выходной"),
         (2, "Больничный"),

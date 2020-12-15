@@ -36,7 +36,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
     serializer_class = WorkerSerializer
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return self.request.user.worker_set.all()
+            return self.request.user.workers.all()
         return Worker.objects.all()
     def create(self, request):
         if not request.user.is_authenticated:

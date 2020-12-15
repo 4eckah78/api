@@ -65,6 +65,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = "__all__"
+        extra_kwargs = {'gap':{"required": False}, 'lateness':{"required": False}}
 
 
 class ExitSerializer(serializers.ModelSerializer):

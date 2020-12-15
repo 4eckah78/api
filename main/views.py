@@ -139,11 +139,13 @@ def send_code(request):
     code = random.randint(10000,100000)
     user.password = code
     user.save()
-    send_mail("Attendance Control, восстановление пароля",
+    result = send_mail("Attendance Control, восстановление пароля",
               "Код подтверждения: " + str(code),
               "Attendance Control <noreply@attendancecontrol.com>",
               [email],
               fail_silently=False)
+    if result == 0:
+        return Response(data={"error":"email was not sent. Maybe the email address doesn't exist"}, status=status.HTTP_400_BAD_REQUEST)
     return Response(data={"message":"email is successfully sent"}, status=status.HTTP_200_OK)
 
 

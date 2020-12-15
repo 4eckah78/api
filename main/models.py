@@ -5,7 +5,7 @@ from django.conf import settings
 from django.utils import timezone
 from .managers import UserManager
 from django.conf import settings
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
@@ -74,8 +74,8 @@ class Gap(models.Model):
 
 class Notification(models.Model):
     is_gap = models.BooleanField()
-    lateness = models.OneToOneField(Lateness, on_delete=models.CASCADE)
-    gap = models.OneToOneField(Gap, on_delete=models.CASCADE)
+    lateness = models.OneToOneField(Lateness, on_delete=models.CASCADE, null=True, blank=True)
+    gap = models.OneToOneField(Gap, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notifications", on_delete = models.CASCADE)
 
 
@@ -93,3 +93,11 @@ class Exit(models.Model):
 class Enter(models.Model):
     worker = models.ForeignKey(Worker, related_name="enters", on_delete = models.CASCADE)
     time = models.DateTimeField(default=timezone.now)
+
+
+@receiver(post_delete, sender=Notification)
+def auto_delete_lateness_and_gap_with_notification(sender, instance, **kwargs):
+    if instance.is_gap:
+        instance.gap.delete()
+    else:
+        instance.lateness.delete()

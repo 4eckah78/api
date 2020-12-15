@@ -70,6 +70,15 @@ class GapViewSet(viewsets.ModelViewSet):
     serializer_class = GapSerializer
     queryset = Gap.objects.all()
     # permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        worker = Worker.objects.get(id=serializer.data["worker"])
+        gap = Gap.objects.get(id=serializer.data["id"])
+        notification = Notification.objects.create(user=worker.user, gap=gap, is_gap=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(('GET',))
@@ -112,6 +121,16 @@ class EnterViewSet(viewsets.ModelViewSet):
     serializer_class = EnterSerializer
     queryset = Enter.objects.all()
     # permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        worker = Worker.objects.get(id=serializer.data["worker"])
+        if serializer.data["time"] > str(worker.start_day):
+            lateness = Lateness.objects.create(worker=worker, time_of_lateness=serializer.data["time"])
+            notification = Notification.objects.create(user=worker.user, lateness=lateness, is_gap=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(('GET',))

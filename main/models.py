@@ -97,7 +97,5 @@ class Enter(models.Model):
 
 @receiver(post_delete, sender=Notification)
 def auto_delete_lateness_and_gap_with_notification(sender, instance, **kwargs):
-    if instance.is_gap:
-        instance.gap.delete()
-    else:
+    if not instance.is_gap:
         instance.lateness.delete()

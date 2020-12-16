@@ -1,4 +1,5 @@
 import random
+import datetime
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
@@ -29,7 +30,32 @@ class GetAllUsers(generics.ListAPIView):
 class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
-    # permission_classes = (IsAdmin, ) 
+    def get(self, request, pk):
+        year = self.request.query_params.get('year', None)
+        month = self.request.query_params.get('month', None)
+        if year == None or month == None:
+            return Response(data={"error":"no year or month in url"}, status=status.HTTP_400_BAD_REQUEST)
+        user = get_object_or_404(User, id=pk)
+        workers_q = Worker.objects.filter(user=user)
+        workers = []
+        for worker in workers_q:
+            exits = Exit.objects.filter(worker=worker, time__year=year, time__month=month)
+            enters = Enter.objects.filter(worker=worker, time__year = year, time__month=month)
+            gaps = Gap.objects.filter(worker=worker, date__year = year, date__month=month)
+            ex_serializer = ExitSerializer(exits, many=True)
+            en_serializer = EnterSerializer(enters, many=True)
+            gap_serializer = GapSerializer(gaps, many=True)
+            w_serializer = WorkerCreateSerializer(worker, many=False)
+            filter_data = dict(w_serializer.data)
+            filter_data["exits"] = ex_serializer.data
+            filter_data["enters"] = en_serializer.data
+            filter_data["gaps"] = gap_serializer.data
+            workers.append(filter_data)
+        serializer = self.serializer_class(user)
+        data = dict(serializer.data)
+        data["workers"] = workers
+        
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class WorkerViewSet(viewsets.ModelViewSet):
@@ -127,7 +153,7 @@ class EnterViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         worker = Worker.objects.get(id=serializer.data["worker"])
-        if serializer.data["time"] > str(worker.start_day):
+        if serializer.data["time"][11:19] > str(worker.start_day):
             lateness = Lateness.objects.create(worker=worker, time_of_lateness=serializer.data["time"])
             notification = Notification.objects.create(user=worker.user, lateness=lateness, is_gap=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -51,9 +51,24 @@ class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
             filter_data["enters"] = en_serializer.data
             filter_data["gaps"] = gap_serializer.data
             workers.append(filter_data)
+
+        notifications_q = Notification.objects.filter(user=user)
+        notifications = []
+        for notification in notifications_q:
+            n_serializer = NotificationSerializer(notification, many=False)
+            filter_data = dict(n_serializer.data)
+            if notification.is_gap:
+                filter_data["worker"] = notification.gap.worker.id
+                filter_data["date"] = notification.gap.date
+            else:
+                filter_data["worker"] = notification.lateness.worker.id
+                filter_data["date"] = notification.lateness.time_of_lateness
+            notifications.append(filter_data)
+        
         serializer = self.serializer_class(user)
         data = dict(serializer.data)
         data["workers"] = workers
+        data["notifications"] = notifications
         
         return Response(data, status=status.HTTP_200_OK)
 
@@ -85,6 +100,21 @@ class VacationViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             return Vacation.objects.filter(worker__user=self.request.user)
         return Vacation.objects.all()
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        vacation = Vacation.objects.get(id=serializer.data["id"])
+        worker = Worker.objects.get(id=vacation.worker.id)
+        vac = vacation.end_date - vacation.start_date
+        if vac.days + 1 > worker.vacation_days:
+            vacation.delete()
+            return Response({"error":"this worker hasn't so many vacations"}, status=status.HTTP_400_BAD_REQUEST)
+        worker.vacation_days -= vac.days + 1
+        worker.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
 
 
 @api_view(('GET',))

@@ -102,6 +102,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     workers = WorkerSerializer(many=True)
+    notifications = NotificationSerializer(many=True)
     class Meta:
         model = User
         fields = ["id", "email", "first_name", "last_name", "is_superuser", "table_name", "notifications", "workers"]

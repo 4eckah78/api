@@ -17,7 +17,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.http import JsonResponse, HttpResponse
 from .models import User
 from .serializers import *
-from .permissions import IsOwnerOrReadOnly, IsAdmin, IsOwnerOrReadOnlyAndNoUserField
+from .permissions import *
 from .common import get_all_worker_data
 
 
@@ -30,6 +30,7 @@ class GetAllUsers(generics.ListAPIView):
 class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
+    permission_classes = [AllowAny]#IsAuthenticatedOrReadOnly, IsSelfOrReadOnly]
     def get(self, request, pk):
         year = self.request.query_params.get('year', None)
         month = self.request.query_params.get('month', None)

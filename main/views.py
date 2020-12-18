@@ -30,7 +30,7 @@ class GetAllUsers(generics.ListAPIView):
 class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly, IsSelfOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly, IsSelfOrReadOnly]
     def get(self, request, pk):
         year = self.request.query_params.get('year', None)
         month = self.request.query_params.get('month', None)
@@ -96,7 +96,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
 class VacationViewSet(viewsets.ModelViewSet):
     serializer_class = VacationSerializer
     queryset = Vacation.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return Vacation.objects.filter(worker__user=self.request.user)
@@ -126,7 +126,7 @@ def get_all_vacations(request, pk):
 class GapViewSet(viewsets.ModelViewSet):
     serializer_class = GapSerializer
     queryset = Gap.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():
@@ -146,7 +146,7 @@ def get_all_gaps(request, pk):
 class LatenessViewSet(viewsets.ModelViewSet):
     serializer_class = LatenessSerializer
     queryset = Lateness.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
 
 
 @api_view(('GET',))
@@ -165,7 +165,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 class ExitViewSet(viewsets.ModelViewSet):
     serializer_class = ExitSerializer
     queryset = Exit.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
 
 
 @api_view(('GET',))
@@ -177,7 +177,7 @@ def get_all_exits(request, pk):
 class EnterViewSet(viewsets.ModelViewSet):
     serializer_class = EnterSerializer
     queryset = Enter.objects.all()
-    permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsOwnerOrReadOnlyAndNoUserField, IsAuthenticatedOrReadOnly]
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():

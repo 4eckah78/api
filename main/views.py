@@ -30,7 +30,7 @@ class GetAllUsers(generics.ListAPIView):
 class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
-    permission_classes = [AllowAny]#IsAuthenticatedOrReadOnly, IsSelfOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsSelfOrReadOnly]
     def get(self, request, pk):
         year = self.request.query_params.get('year', None)
         month = self.request.query_params.get('month', None)

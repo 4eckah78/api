@@ -43,7 +43,7 @@ class Worker(models.Model):
     first_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
     patronymic = models.CharField(max_length=30)
-    avatar = models.ImageField(upload_to='media/avatars/', null=True, blank=True)
+    # avatar = models.ImageField(upload_to='media/avatars/', null=True, blank=True)
     HOUR_NORM = (
         (1, 36),
         (2, 40),
@@ -69,7 +69,7 @@ class Gap(models.Model):
         (4, "Командировка"),
     )
     reason = models.IntegerField(choices=REASONS) 
-    document = models.ImageField(upload_to='media/documents/', null=True, blank=True)
+    document = models.FileField(upload_to='media/documents/', null=True, blank=True)
 
 
 class Notification(models.Model):

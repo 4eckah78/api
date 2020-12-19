@@ -75,7 +75,7 @@ class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
 
 
 class WorkerViewSet(viewsets.ModelViewSet):
-    serializer_class = WorkerSerializer
+    serializer_class = WorkerListSerializer
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return self.request.user.workers.all()

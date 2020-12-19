@@ -40,8 +40,8 @@ class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
         workers_q = Worker.objects.filter(user=user)
         workers = []
         for worker in workers_q:
-            exits = Exit.objects.filter(worker=worker, time__year=year, time__month=month)
-            enters = Enter.objects.filter(worker=worker, time__year = year, time__month=month)
+            exits = Exit.objects.filter(worker=worker, time__year=year, time__month=month).order_by('time')
+            enters = Enter.objects.filter(worker=worker, time__year = year, time__month=month).order_by('time')
             gaps = Gap.objects.filter(worker=worker, date__year = year, date__month=month)
             ex_serializer = ExitSerializer(exits, many=True)
             en_serializer = EnterSerializer(enters, many=True)

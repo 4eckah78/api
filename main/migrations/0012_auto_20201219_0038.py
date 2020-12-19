@@ -10,11 +10,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
+        migrations.AlterField(
             model_name='gap',
             name='document',
             field=models.FileField(upload_to='media/documents/', null=True, blank=True),
-            preserve_default=False,
         ),
         migrations.RemoveField(
             model_name='worker',

@@ -46,7 +46,7 @@ class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
             ex_serializer = ExitSerializer(exits, many=True)
             en_serializer = EnterSerializer(enters, many=True)
             gap_serializer = GapSerializer(gaps, many=True)
-            w_serializer = WorkerListSerializer(worker, many=False)
+            w_serializer = WorkerSerializer(worker, many=False)
             filter_data = dict(w_serializer.data)
             filter_data["exits"] = ex_serializer.data
             filter_data["enters"] = en_serializer.data

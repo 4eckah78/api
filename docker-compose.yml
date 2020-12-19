@@ -8,14 +8,3 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    environment:
-      - SECRET_KEY=hh57bc(=ix3r%-0$niht%mr+2kfyzoeo41wx^1vizh-lr2xq1=
-      - DEBUG="False"
-      - NAME=de97rp8n86i261
-      - USER=mtsqvhqxicqyzj
-      - PASSWORD=c5d6ef08c2b0095a407fa3abe3e1273e6597216b64e804058aa07d7be5d92418
-      - HOST=ec2-54-75-244-161.eu-west-1.compute.amazonaws.com
-      - PORT=5432
-      - DATABASE_URL=postgres://mtsqvhqxicqyzj:c5d6ef08c2b0095a407fa3abe3e1273e6597216b64e804058aa07d7be5d92418@ec2-54-75-244-161.eu-west-1.compute.amazonaws.com:5432/de97rp8n86i261
-      - EMAIL_HOST_USER=chaklyarov@gmail.com
-      - EMAIL_HOST_PASSWORD=Attendancecontrol

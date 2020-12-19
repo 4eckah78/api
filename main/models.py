@@ -68,7 +68,7 @@ class Gap(models.Model):
         (3, "Отпуск"),
         (4, "Командировка"),
     )
-    reason = models.IntegerField(choices=REASONS) 
+    reason = models.IntegerField(choices=REASONS, null=True) 
     document = models.FileField(upload_to='media/documents/', null=True, blank=True)
 
 

@@ -53,6 +53,7 @@ class GapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gap
         fields = "__all__"
+        extra_kwargs = {"reason":{"required":False}}
 
 
 class LatenessSerializer(serializers.ModelSerializer):

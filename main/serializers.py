@@ -87,6 +87,13 @@ class WorkerCreateSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class WorkerListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Worker
+        fields = ["id", "first_name", "second_name", "patronymic", 
+        "hour_norm", "vacation_days", "start_day", "end_day", "vacations", "gaps", "latenesses", "exits", "enters"]
+
+
 class WorkerSerializer(serializers.ModelSerializer):
     vacations = VacationSerializer(many=True, read_only=True)
     gaps = GapSerializer(many=True, read_only=True)

@@ -95,7 +95,7 @@ class WorkerSerializer(serializers.ModelSerializer):
     enters = EnterSerializer(many=True, read_only=True)
     class Meta:
         model = Worker
-        fields = ["id", "first_name", "second_name", "patronymic", "avatar", 
+        fields = ["id", "first_name", "second_name", "patronymic", 
         "hour_norm", "vacation_days", "start_day", "end_day", "vacations", "gaps", "latenesses", "exits", "enters"]
         extra_kwargs = {'vacations':{"required": False}, 'gaps':{"required": False}, 'latenesses':{"required": False},
         'exits':{"required": False}, 'enters':{"required": False} }

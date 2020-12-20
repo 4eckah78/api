@@ -11,5 +11,8 @@ WORKDIR /app
 COPY . /app/
 
 RUN pip install -r requirements.txt
+<<<<<<< HEAD:Dockerfile
 
 CMD gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
+=======
+>>>>>>> 836a587e7a8c9f0dd536557c627f18e91a39e18e:Dockerfile.local

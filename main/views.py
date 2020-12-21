@@ -24,7 +24,7 @@ from .common import get_all_worker_data
 class GetAllUsers(generics.ListAPIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
-    # permission_classes = (IsAdmin, )
+    permission_classes = (IsAdmin, )
 
 
 class PutGetDeleteOneUser(generics.RetrieveUpdateDestroyAPIView):
